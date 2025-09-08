@@ -1,18 +1,26 @@
 use sdl3::rect::{Point, Rect};
-use crate::base::anime::Anime;
+use sdl3::render::WindowCanvas;
+use crate::base::anime_player::AnimePlayer;
 
 pub struct Charactar<'a> {
     entity: Rect,
-    anime: &'a Anime<'a>,
+    anime_player: AnimePlayer<'a>
 }
 
 //构造函数的方法集合
 impl<'a> Charactar<'a> {
-    pub fn new(entity:Rect, anime: &'a Anime<'a>) -> Self {
+    pub fn new(entity:Rect, anime_player: AnimePlayer<'a>) -> Self {
         Charactar {
             entity,
-            anime
+            anime_player
         }
+    }
+}
+
+impl<'a> Charactar<'a> {
+    pub fn normal(&mut self, canvas:&mut WindowCanvas) -> &mut Self {
+        self.anime_player.normal(canvas,&self.entity);
+        self
     }
 }
 

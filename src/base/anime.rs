@@ -44,6 +44,14 @@ impl<'a> Anime<'a> {
     pub fn height(&self) -> u32 {
         self.height
     }
+
+    pub fn picture(&self, index:usize) -> &Texture<'_> {
+        &self.anime[index]
+    }
+    
+    pub fn length(&self) -> usize {
+        self.anime.capacity()
+    }
 }
 
 //用于加载序列帧动画

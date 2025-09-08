@@ -11,6 +11,7 @@ use sdl3::rect::Rect;
 use sdl3::render::{BlendMode, TextureAccess, TextureCreator, Texture, Canvas, WindowCanvas};
 use sdl3::keyboard::Keycode;
 use sdl3::video::WindowContext;
+use crate::base::anime_player::AnimePlayer;
 
 fn main() {
     let (window_x,window_y):(u32,u32) = (800,600);
@@ -39,7 +40,13 @@ fn main() {
         TextureAccess::Static
     );
     let entity = Rect::new(0, 0, anime.width(), anime.height());
-    let mut player = Charactar::new(entity,&anime);
+    let mut player = Charactar::new(
+        entity,
+        AnimePlayer::from(
+            &anime,
+            Duration::from_millis(100)
+        )
+    );
 
     const TIME_CHECK: Duration = Duration::from_millis(1000 / 120);
     let mut fps:u32= 0;
@@ -97,19 +104,19 @@ fn main() {
             player.set_x(player.x() - player_speed);
         }
         if right_move {
-            player.set_x(player.y() - player_speed);
+            player.set_x(player.x() + player_speed);
         }
         if up_move {
-            player.set_y(player.x() - player_speed);
+            player.set_y(player.y() - player_speed);
         }
         if down_move {
-            player.set_y(player.x() + player_speed);
+            player.set_y(player.y() + player_speed);
         }
 
-        player.normal(&mut canvas,fps);
+        player.normal(&mut canvas);
         canvas.present();
 
-        let loop_over = loop_start.duration_since(loop_start);
+        let loop_over = loop_start.duration_since(Instant::now());
         if loop_over < TIME_CHECK {
             thread::sleep(TIME_CHECK- loop_over)
         }
