@@ -1,7 +1,8 @@
 use std::time::{Duration, Instant};
-use sdl3::rect::Rect;
-use sdl3::render::{WindowCanvas, Texture};
+use sdl3::rect::{Point, Rect};
+use sdl3::render::{WindowCanvas, Texture, FPoint};
 use crate::base::anime::Anime;
+use crate::base::facing::Facing;
 
 pub struct AnimePlayer<'a> {
     anime: &'a Anime<'a>,
@@ -26,19 +27,46 @@ impl<'a> AnimePlayer<'a> {
 
 //动画播放的方法集合
 impl<'a> AnimePlayer<'a> {
-    pub fn normal(&mut self, canvas: &mut WindowCanvas, target: &Rect) -> &mut Self{
+    pub fn normal_stop(
+        &mut self,
+        canvas: &mut WindowCanvas,
+        target: &Rect,
+        target_facing: Facing
+    ) -> &mut Self{
         self.timer += self.elapsed();
         if self.timer >= self.interval {
             self.step().reset_zero();
         }
-        self.play(canvas, target).new_clock()
+        let need_horizontal = target_facing != self.facing();
+        self.play(
+            canvas,
+            None,
+            target,
+            std::f64::consts::PI / 2.0,
+            None,
+            need_horizontal,
+            false
+        ).new_clock()
     }
 
-    fn play(&mut self, canvas:&mut WindowCanvas, target:&Rect) -> &mut Self {
-        canvas.copy(
+    fn play(
+        &mut self,
+        canvas:&mut WindowCanvas,
+        src: Option<Rect>,
+        target:&Rect,
+        angle: f64,
+        center: Option<FPoint>,
+        flip_h: bool, //水平翻转
+        flip_v: bool //竖直翻转
+    ) -> &mut Self {
+        canvas.copy_ex(
             self.picture(),
             None,
-            *target
+            *target,
+            angle,
+            None,
+            flip_h,
+            flip_v
         ).unwrap();
         self
     }
@@ -56,6 +84,10 @@ impl<'a> AnimePlayer<'a> {
 
     pub fn length(&self) -> usize {
         self.anime.length()
+    }
+
+    pub fn facing(&self) -> Facing{
+        self.anime.facing()
     }
 }
 

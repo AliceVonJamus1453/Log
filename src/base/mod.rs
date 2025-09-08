@@ -1,3 +1,4 @@
 pub mod anime;
 pub mod anime_player;
-pub mod charactar;
+pub mod move_controller;
+pub mod facing;

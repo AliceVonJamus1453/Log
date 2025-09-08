@@ -1,7 +1,7 @@
 mod base;
+mod object;
 use crate::base::anime::Anime;
-use crate::base::charactar::Charactar;
-
+use object::character::Character;
 use std::path::Path;
 use std::thread;
 use std::time::{Duration, Instant};
@@ -12,6 +12,7 @@ use sdl3::render::{BlendMode, TextureAccess, TextureCreator, Texture, Canvas, Wi
 use sdl3::keyboard::Keycode;
 use sdl3::video::WindowContext;
 use crate::base::anime_player::AnimePlayer;
+use crate::base::facing::Facing;
 
 fn main() {
     let (window_x,window_y):(u32,u32) = (800,600);
@@ -24,37 +25,36 @@ fn main() {
 
     let sdl3 = sdl3::init().unwrap();
     let video_subsystem = sdl3.video().unwrap();
-    let window = video_subsystem.window("读取图片测试", window_x,window_y)
+    let window = video_subsystem.window("各种测试", window_x,window_y)
         .position_centered()
         .build()
         .unwrap();
     let mut canvas = window.into_canvas();
     canvas.set_blend_mode(BlendMode::Blend);
     let creator = canvas.texture_creator();
-    
-    let anime = Anime::from(
+
+    let player_anime = Anime::from(
         Path::new("./art/charactar/alice/stand"),
         16,
         "png",
         &creator,
-        TextureAccess::Static
+        TextureAccess::Static,
+        Facing::Right
     );
-    let entity = Rect::new(0, 0, anime.width(), anime.height());
-    let mut player = Charactar::new(
+    let entity = Rect::new(0, 0, player_anime.width(), player_anime.height());
+    let mut player = Character::new(
         entity,
         AnimePlayer::from(
-            &anime,
+            &player_anime,
             Duration::from_millis(100)
-        )
+        ),
+        Some(player_speed)
     );
 
     const TIME_CHECK: Duration = Duration::from_millis(1000 / 120);
-    let mut fps:u32= 0;
     let mut event_pump = sdl3.event_pump().unwrap();
     'Running: loop {
         let loop_start = Instant::now();
-        fps += 1;
-        fps %= 10;
 
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();
@@ -101,10 +101,10 @@ fn main() {
         }
 
         if left_move {
-            player.set_x(player.x() - player_speed);
+            player.set_x(player.x() - player_speed).set_facing(Facing::Left);
         }
         if right_move {
-            player.set_x(player.x() + player_speed);
+            player.set_x(player.x() + player_speed).set_facing(Facing::Right);
         }
         if up_move {
             player.set_y(player.y() - player_speed);
@@ -113,7 +113,7 @@ fn main() {
             player.set_y(player.y() + player_speed);
         }
 
-        player.normal(&mut canvas);
+        player.run(&mut canvas);
         canvas.present();
 
         let loop_over = loop_start.duration_since(Instant::now());

@@ -2,9 +2,11 @@ use std::path::Path;
 use sdl3::pixels::{PixelFormat, PixelFormatEnum};
 use sdl3::render::{TextureAccess, TextureCreator, Texture};
 use sdl3::video::WindowContext;
+use crate::base::facing::Facing;
 
 pub struct Anime<'a> {
     anime: Vec<Texture<'a>>,
+    normal_facing: Facing,
     width: u32,
     height: u32,
 }
@@ -16,7 +18,8 @@ impl<'a> Anime<'a> {
         length: usize,
         fmt: &str,
         creator: &'a TextureCreator<WindowContext>,
-        access: TextureAccess
+        access: TextureAccess,
+        normal_facing: Facing
     ) -> Self {
         let temp = load_anime(
             get_name_list(
@@ -31,6 +34,7 @@ impl<'a> Anime<'a> {
             anime: temp.0,
             width: temp.1,
             height: temp.2,
+            normal_facing
         }
     }
 }
@@ -51,6 +55,10 @@ impl<'a> Anime<'a> {
     
     pub fn length(&self) -> usize {
         self.anime.capacity()
+    }
+
+    pub fn facing(&self) -> Facing {
+        self.normal_facing.clone()
     }
 }
 
