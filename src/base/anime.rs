@@ -46,11 +46,6 @@ impl<'a> Anime<'a> {
     }
 }
 
-//使动画播放的方法集合
-impl<'a> Anime<'a> {
-    
-}
-
 //用于加载序列帧动画
 fn load_anime(
     src: Vec<String>,
