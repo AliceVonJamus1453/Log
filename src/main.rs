@@ -39,7 +39,7 @@ fn main() {
         TextureAccess::Static
     );
     let entity = Rect::new(0, 0, anime.width(), anime.height());
-    let mut player = Charactar::new(entity,anime);
+    let mut player = Charactar::new(entity,&anime);
 
     const TIME_CHECK: Duration = Duration::from_millis(1000 / 120);
     let mut fps:u32= 0;
@@ -93,10 +93,18 @@ fn main() {
             }
         }
 
-        if left_move {player.entity.x -= player_speed}
-        if right_move {player.entity.x += player_speed}
-        if up_move {player.entity.y -= player_speed}
-        if down_move {player.entity.y += player_speed}
+        if left_move {
+            player.set_x(player.x() - player_speed);
+        }
+        if right_move {
+            player.set_x(player.y() - player_speed);
+        }
+        if up_move {
+            player.set_y(player.x() - player_speed);
+        }
+        if down_move {
+            player.set_y(player.x() + player_speed);
+        }
 
         player.normal(&mut canvas,fps);
         canvas.present();
