@@ -1,11 +1,10 @@
-use sdl3::rect::{Point, Rect};
-use sdl3::render::WindowCanvas;
+use sdl3::render::{WindowCanvas, FRect};
 use crate::base::anime_player::AnimePlayer;
 use crate::base::move_controller::{MoveController, MoveState};
 use crate::base::facing::Facing;
 
 pub struct Character<'a> {
-    entity: Rect,
+    entity: FRect,
     anime_player: AnimePlayer<'a>,
     move_controller: MoveController,
     facing: Facing
@@ -13,7 +12,7 @@ pub struct Character<'a> {
 
 //构造函数的方法集合
 impl<'a> Character<'a> {
-    pub fn new(entity:Rect, anime_player: AnimePlayer<'a>, speed:Option<i32>) -> Self {
+    pub fn new(entity:FRect, anime_player: AnimePlayer<'a>, speed:Option<f32>) -> Self {
         Character {
             entity,
             anime_player,
@@ -39,20 +38,21 @@ impl<'a> Character<'a> {
         self.anime_player.normal_stop(canvas, &self.entity, self.facing());
         self
     }
+
+    pub fn draw_shadow(&mut self) -> &mut Self {
+
+        self
+    }
 }
 
 //获取数据的方法集合
 impl<'a> Character<'a> {
-    pub fn x(&self) -> i32 {
-        self.entity.x()
+    pub fn x(&self) -> f32 {
+        self.entity.x
     }
 
-    pub fn y(&self) -> i32 {
-        self.entity.y()
-    }
-
-    pub fn center(&self) -> Point {
-        self.entity.center()
+    pub fn y(&self) -> f32 {
+        self.entity.y
     }
 
     pub fn state(&self) -> MoveState{
@@ -66,21 +66,16 @@ impl<'a> Character<'a> {
 
 //更新数据的方法集合
 impl<'a> Character<'a> {
-    pub fn set_x(&mut self, target:i32) -> &mut Self {
+    pub fn set_x(&mut self, target:f32) -> &mut Self {
         self.entity.set_x(target);
         self
     }
 
-    pub fn set_y(&mut self, target:i32) -> &mut Self {
+    pub fn set_y(&mut self, target:f32) -> &mut Self {
         self.entity.set_y(target);
         self
     }
 
-    pub fn center_on(&mut self, target:Point) -> &mut Self {
-        self.entity.center_on(target);
-        self
-    }
-    
     pub fn set_facing(&mut self, target: Facing) -> &mut Self {
         self.facing = target;
         self

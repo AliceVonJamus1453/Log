@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 use sdl3::rect::{Point, Rect};
-use sdl3::render::{WindowCanvas, Texture, FPoint};
+use sdl3::render::{WindowCanvas, Texture, FPoint, FRect};
 use crate::base::anime::Anime;
 use crate::base::facing::Facing;
 
@@ -30,7 +30,7 @@ impl<'a> AnimePlayer<'a> {
     pub fn normal_stop(
         &mut self,
         canvas: &mut WindowCanvas,
-        target: &Rect,
+        target: &FRect,
         target_facing: Facing
     ) -> &mut Self{
         self.timer += self.elapsed();
@@ -53,7 +53,7 @@ impl<'a> AnimePlayer<'a> {
         &mut self,
         canvas:&mut WindowCanvas,
         src: Option<Rect>,
-        target:&Rect,
+        target:&FRect,
         angle: f64,
         center: Option<FPoint>,
         flip_h: bool, //水平翻转

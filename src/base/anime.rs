@@ -1,8 +1,9 @@
 use std::path::Path;
 use sdl3::pixels::{PixelFormat, PixelFormatEnum};
-use sdl3::render::{TextureAccess, TextureCreator, Texture};
+use sdl3::render::{Texture, TextureAccess, TextureCreator};
 use sdl3::video::WindowContext;
 use crate::base::facing::Facing;
+use crate::base::file_system;
 
 pub struct Anime<'a> {
     anime: Vec<Texture<'a>>,
@@ -13,7 +14,26 @@ pub struct Anime<'a> {
 
 //构造函数的方法集合
 impl<'a> Anime<'a> {
-    pub fn from(
+    pub fn from_name_list (
+        sec: Vec<String>,
+        creator: &'a TextureCreator<WindowContext>,
+        access: TextureAccess,
+        normal_facing: Facing
+    ) -> Self {
+        let temp = load_anime(
+            sec,
+            creator,
+            access,
+        );
+        Anime {
+            anime: temp.0,
+            width: temp.1,
+            height: temp.2,
+            normal_facing
+        }
+    }
+
+    pub fn from_detail (
         src: &Path,
         length: usize,
         fmt: &str,
@@ -22,7 +42,7 @@ impl<'a> Anime<'a> {
         normal_facing: Facing
     ) -> Self {
         let temp = load_anime(
-            get_name_list(
+            file_system::get_name_list(
                 src,
                 length,
                 fmt
@@ -68,7 +88,7 @@ fn load_anime(
     creator: &TextureCreator<WindowContext>,
     access:TextureAccess
 ) -> (Vec<Texture<'_>>,u32,u32) {
-    let mut re = Vec::with_capacity(src.capacity());
+    let mut re = Vec::with_capacity(src.len());
     let mut img = image::open(&src[0]).unwrap().to_rgba8();
     let (x,y) = img.dimensions();
     for src in src.iter() {
@@ -84,13 +104,4 @@ fn load_anime(
         })
     }
     (re,x,y)
-}
-
-//用于将序列帧动画的各图片的路径生成字符串数组
-fn get_name_list(src:&Path, length:usize, fmt: &str) -> Vec<String> {
-    let mut re = Vec::with_capacity(length);
-    for i in 0..length {
-        re.push(format!("{}{:0>3}.{fmt}", src.to_str().unwrap() ,i))
-    }
-    re
 }

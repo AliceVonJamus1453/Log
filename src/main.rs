@@ -7,8 +7,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 use sdl3::event::Event;
 use sdl3::pixels::{Color, PixelFormat, PixelFormatEnum};
-use sdl3::rect::Rect;
-use sdl3::render::{BlendMode, TextureAccess, TextureCreator, Texture, Canvas, WindowCanvas};
+use sdl3::render::{BlendMode, TextureAccess,Texture, Canvas, WindowCanvas, FRect};
 use sdl3::keyboard::Keycode;
 use sdl3::video::WindowContext;
 use crate::base::anime_player::AnimePlayer;
@@ -16,13 +15,12 @@ use crate::base::facing::Facing;
 
 fn main() {
     let (window_x,window_y):(u32,u32) = (800,600);
-    let player_speed = 1;
+    let player_speed = 1.0;
 
     let mut up_move = false;
     let mut down_move = false;
     let mut left_move = false;
     let mut right_move = false;
-
     let sdl3 = sdl3::init().unwrap();
     let video_subsystem = sdl3.video().unwrap();
     let window = video_subsystem.window("各种测试", window_x,window_y)
@@ -33,15 +31,15 @@ fn main() {
     canvas.set_blend_mode(BlendMode::Blend);
     let creator = canvas.texture_creator();
 
-    let player_anime = Anime::from(
-        Path::new("./art/charactar/alice/stand"),
+    let player_anime = Anime::from_detail(
+        Path::new("../anime/charactar/alice/stand"),
         16,
         "png",
         &creator,
         TextureAccess::Static,
         Facing::Right
     );
-    let entity = Rect::new(0, 0, player_anime.width(), player_anime.height());
+    let entity = FRect::new(0.0, 0.0, player_anime.width() as f32, player_anime.height() as f32);
     let mut player = Character::new(
         entity,
         AnimePlayer::from(
@@ -56,7 +54,7 @@ fn main() {
     'Running: loop {
         let loop_start = Instant::now();
 
-        canvas.set_draw_color(Color::BLACK);
+        canvas.set_draw_color(Color::WHITE);
         canvas.clear();
 
         for event in event_pump.poll_iter() {
@@ -68,8 +66,14 @@ fn main() {
                 } => {
                     match keycode.unwrap() {
 
-                        Keycode::Left => left_move = true,
-                        Keycode::Right => right_move = true,
+                        Keycode::Left => {
+                            left_move = true;
+                            player.set_facing(Facing::Left);
+                        },
+                        Keycode::Right => {
+                            right_move = true;
+                            player.set_facing(Facing::Right);
+                        },
                         Keycode::Up => up_move = true,
                         Keycode::Down => down_move = true,
 
@@ -83,8 +87,14 @@ fn main() {
                 } => {
                     match keycode.unwrap() {
 
-                        Keycode::Left => left_move = false,
-                        Keycode::Right => right_move = false,
+                        Keycode::Left => {
+                            left_move = false;
+                            player.set_facing(Facing::Left);
+                        },
+                        Keycode::Right => {
+                            right_move = false;
+                            player.set_facing(Facing::Right);
+                        },
                         Keycode::Up => up_move = false,
                         Keycode::Down => down_move = false,
 
@@ -101,10 +111,10 @@ fn main() {
         }
 
         if left_move {
-            player.set_x(player.x() - player_speed).set_facing(Facing::Left);
+            player.set_x(player.x() - player_speed);
         }
         if right_move {
-            player.set_x(player.x() + player_speed).set_facing(Facing::Right);
+            player.set_x(player.x() + player_speed);
         }
         if up_move {
             player.set_y(player.y() - player_speed);

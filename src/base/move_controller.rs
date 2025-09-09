@@ -1,12 +1,12 @@
 use crate::base::facing::Facing;
 pub struct MoveController {
     move_state: MoveState,
-    speed: Option<i32>
+    speed: Option<f32>
 }
 
 //构造函数的集合
 impl MoveController {
-    pub fn new(speed:Option<i32>) -> Self {
+    pub fn new(speed:Option<f32>) -> Self {
         MoveController {
             move_state: MoveState::Stop,
             speed

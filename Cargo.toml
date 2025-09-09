@@ -8,3 +8,6 @@ sdl3 = "0.14.40"
 rand = "0.9.2"
 image = "0.25.8"
 glam = "0.30.5"
+
+[lib]
+proc-macro = true
