@@ -2,7 +2,7 @@ mod base;
 mod object;
 use crate::base::anime::Anime;
 use object::character::Character;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::thread;
 use std::time::{Duration, Instant};
 use sdl3::event::Event;
@@ -10,6 +10,7 @@ use sdl3::pixels::{Color, PixelFormat, PixelFormatEnum};
 use sdl3::render::{BlendMode, TextureAccess,Texture, Canvas, WindowCanvas, FRect};
 use sdl3::keyboard::Keycode;
 use sdl3::video::WindowContext;
+use sdl_test::init_name_list;
 use crate::base::anime_player::AnimePlayer;
 use crate::base::facing::Facing;
 
@@ -31,8 +32,11 @@ fn main() {
     canvas.set_blend_mode(BlendMode::Blend);
     let creator = canvas.texture_creator();
 
+    init_name_list!(anime);
+    // let test:Vec<_> = init_name_list!(anime);
+
     let player_anime = Anime::from_detail(
-        Path::new("../anime/charactar/alice/stand"),
+        Path::new("./anime/character/alice/stand"),
         16,
         "png",
         &creator,
